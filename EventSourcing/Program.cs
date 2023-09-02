@@ -11,7 +11,8 @@ internal class Program
         // TODO: Persistent Storage
         // TODO: Data from events
         // TODO: Projections
-        // TODO: do we want to update per lap time or per lap?
+        // TODO: do we want to update per lap time or per lap? 
+        //       both "race" and drivers could subscribe
 
         //  LAP 1   GAP     TIME
         //  11              1:35.991
