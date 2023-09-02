@@ -3,7 +3,7 @@ namespace EventSourcing;
 public class CurrentState
 {
     public int LapsCompleted { get; internal set; }
-    public TimeSpan FastestLap { get; internal set; } = TimeSpan.FromSeconds(0);
+    public TimeSpan? FastestLap { get; internal set; } = null;
 }
 
 public class CarTiming
@@ -42,7 +42,8 @@ public class CarTiming
     private void Apply(LapCompleted lapCompleted)
     {
         _currentState.LapsCompleted += 1;
-        _currentState.FastestLap = lapCompleted.Time; 
+        if (_currentState.FastestLap is null || lapCompleted.Time < _currentState.FastestLap)
+            _currentState.FastestLap = lapCompleted.Time;
     }
 
     internal IList<IEvent> GetEvents()
@@ -50,8 +51,8 @@ public class CarTiming
         return _events;
     }
 
-    internal object GetLapsCompleted() => _currentState.LapsCompleted;
+    internal int GetLapsCompleted() => _currentState.LapsCompleted;
 
-    internal object GetFastestLap() => _currentState.FastestLap;
+    internal TimeSpan? GetFastestLap() => _currentState.FastestLap;
 
 }
