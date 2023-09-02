@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace EventSourcing;
 
 internal class Program
@@ -37,9 +39,10 @@ internal class Program
         var car = timingRepository.Get(44);
 
         // TODO: interactive input / run lap by lap
-
-        car.LapCompleted("8.797", "1:44.788");
+        car.LapCompleted("8.797", TimeSpan.ParseExact("01:44.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
 
         Console.WriteLine($"Car {car.CarNumber} has completed {car.GetLapsCompleted()} laps");
+        Console.WriteLine($"PB: {car.GetFastestLap()} laps");
+
     }
 }
