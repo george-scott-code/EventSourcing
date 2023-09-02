@@ -43,8 +43,16 @@ internal class Program
         car.LapCompleted("8.797", TimeSpan.ParseExact("01:44.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
         car.LapCompleted("8.797", TimeSpan.ParseExact("01:45.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
 
-        Console.WriteLine($"Car {car.CarNumber} has completed {car.GetLapsCompleted()} laps");
-        Console.WriteLine($"PB: {car.GetFastestLap()} laps");
+        // persist changes
+        timingRepository.Save(car);
 
+        // TODO: should be loading projection data when available for efficiency
+        var timings = timingRepository.Get();
+
+        foreach (var timing in timings)
+        {
+            Console.WriteLine($"Car {timing.CarNumber} has completed {timing.GetLapsCompleted()} laps");
+            Console.WriteLine($"PB: {timing.GetFastestLap()} laps");
+        }
     }
 }
