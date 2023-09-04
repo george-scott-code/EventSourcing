@@ -3,7 +3,7 @@ namespace EventSourcing;
 public class CurrentState
 {
     public int LapsCompleted { get; internal set; }
-    public TimeSpan? FastestLap { get; internal set; } = null;
+    public LapCompleted? FastestLap { get; internal set; } = null;
 }
 
 public class CarTiming
@@ -26,12 +26,20 @@ public class CarTiming
         AddEvent(new LapCompleted(lapNumber, this.CarNumber, gap, time));
     }
 
+    public void DeleteLapTime(int lapNumber)
+    {
+        AddEvent(new LapDeleted(lapNumber));
+    }
+
     internal void AddEvent(IEvent evnt)
     {
         switch (evnt)
         {
             case LapCompleted lapCompleted:
                 Apply(lapCompleted);
+                break;
+            case LapDeleted lapDeleted:
+                Apply(lapDeleted);
                 break;
             default: throw new NotSupportedException($"Unsupported Event: {nameof(evnt.GetType)}");
         }
@@ -42,8 +50,19 @@ public class CarTiming
     private void Apply(LapCompleted lapCompleted)
     {
         _currentState.LapsCompleted += 1;
-        if (_currentState.FastestLap is null || lapCompleted.Time < _currentState.FastestLap)
-            _currentState.FastestLap = lapCompleted.Time;
+        if (_currentState.FastestLap is null || lapCompleted.Time < _currentState.FastestLap.Time)
+            _currentState.FastestLap = lapCompleted;
+    }
+
+    private void Apply(LapDeleted lapDeleted)
+    {
+        if (_currentState.FastestLap is not null && lapDeleted.LapNumber == _currentState.FastestLap.LapNumber)
+            CalculateFastestLap();
+    }
+
+    private void CalculateFastestLap()
+    {
+        _currentState.FastestLap = _currentState.FastestLap;
     }
 
     internal IList<IEvent> GetEvents()
@@ -53,6 +72,5 @@ public class CarTiming
 
     internal int GetLapsCompleted() => _currentState.LapsCompleted;
 
-    internal TimeSpan? GetFastestLap() => _currentState.FastestLap;
-
+    internal TimeSpan? GetFastestLap() => _currentState.FastestLap?.Time;
 }
