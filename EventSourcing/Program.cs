@@ -7,7 +7,6 @@ internal class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        // Temp:
         var timingRepository = new TimingRepository();
         // TODO: Load Data from file
         // TODO: Persistent Storage
@@ -52,7 +51,7 @@ internal class Program
         foreach (var timing in timings)
         {
             Console.WriteLine($"Car {timing.CarNumber} has completed {timing.GetLapsCompleted()} laps");
-            Console.WriteLine($"PB: {timing.GetFastestLap()} laps");
+            Console.WriteLine($"PB: {timing.GetFastestLap()}");
         }
     }
 }
