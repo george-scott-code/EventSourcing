@@ -20,10 +20,10 @@ public class CarTiming
         CarNumber = carNumber;
     }
 
-    public void LapCompleted(string gap, TimeSpan time)
+    public void LapCompleted(int lapNumber, string gap, TimeSpan time)
     {
         // domain rules / validation
-        AddEvent(new LapCompleted(CarNumber, gap, time));
+        AddEvent(new LapCompleted(lapNumber, this.CarNumber, gap, time));
     }
 
     internal void AddEvent(IEvent evnt)
