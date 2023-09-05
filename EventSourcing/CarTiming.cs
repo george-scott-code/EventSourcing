@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 
 namespace EventSourcing;
 
@@ -51,7 +50,6 @@ public class CarTiming
 
     private void Apply(LapCompleted lapCompleted)
     {
-        // _currentState.LapsCompleted += 1;
         _currentState.LapsCompleted.Add(lapCompleted);
         if (_currentState.FastestLap is null || lapCompleted.Time < _currentState.FastestLap.Time)
             _currentState.FastestLap = lapCompleted;
