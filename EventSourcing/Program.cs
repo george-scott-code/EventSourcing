@@ -14,7 +14,7 @@ internal class Program
         // TODO: Projections
         // TODO: Tests when patterns established
         // TODO: do we want to update per lap time or per lap? 
-        //       both "race" and drivers could subscribe
+        //       both "race" and drivers could subscribe to events
 
         //  LAP 1   GAP     TIME
         //  11              1:35.991

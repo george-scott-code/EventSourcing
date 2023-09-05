@@ -6,21 +6,10 @@ public class CurrentState
     public Dictionary<int, LapTiming> LapsCompleted { get; set; } = new Dictionary<int, LapTiming>();
 }
 
-public class LapTiming
-{
-    public LapTiming(TimeSpan time)
-    {
-        Time = time;
-    }
-
-    public TimeSpan Time { get; }
-    public bool IsDeleted { get; set; } = false;
-}
-
 public class CarTiming
 {
     public int CarNumber { get; }
-    // can this be abstraccted?
+    // can this be abstracted?
     public readonly IList<IEvent> _events = new List<IEvent>();
 
     // Projection (Current State)
@@ -81,5 +70,4 @@ public class CarTiming
                                                  .OrderBy(x => x.Time)
                                                  .FirstOrDefault()?.Time;
     }
-
 }
