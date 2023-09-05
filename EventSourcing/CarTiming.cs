@@ -3,7 +3,18 @@ namespace EventSourcing;
 
 public class CurrentState
 {
-    public List<LapCompleted> LapsCompleted { get; internal set; } = new List<LapCompleted>();
+    public Dictionary<int, LapTiming> LapsCompleted { get; set; } = new Dictionary<int, LapTiming>();
+}
+
+public class LapTiming
+{
+    public LapTiming(TimeSpan time)
+    {
+        Time = time;
+    }
+
+    public TimeSpan Time { get; }
+    public bool IsDeleted { get; set; } = false;
 }
 
 public class CarTiming
@@ -49,12 +60,12 @@ public class CarTiming
 
     private void Apply(LapCompleted lapCompleted)
     {
-        _currentState.LapsCompleted.Add(lapCompleted);
+        _currentState.LapsCompleted.Add(lapCompleted.LapNumber, new LapTiming(lapCompleted.Time));
     }
 
     private void Apply(LapDeleted lapDeleted)
     {
-        
+        _currentState.LapsCompleted[lapDeleted.LapNumber].IsDeleted = true;
     }
 
     internal IList<IEvent> GetEvents()
@@ -64,5 +75,11 @@ public class CarTiming
 
     internal int GetLapsCompleted() => _currentState.LapsCompleted.Count;
 
-    internal TimeSpan? GetFastestLap() => _currentState.LapsCompleted?.Where(x => !x.IsDeleted).OrderBy(x => x.Time).FirstOrDefault()?.Time;
+    internal TimeSpan? GetFastestLap()
+    {
+        return _currentState.LapsCompleted.Values.Where(x => !x.IsDeleted)
+                                                 .OrderBy(x => x.Time)
+                                                 .FirstOrDefault()?.Time;
+    }
+
 }
