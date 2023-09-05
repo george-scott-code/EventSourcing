@@ -4,7 +4,6 @@ namespace EventSourcing;
 public class CurrentState
 {
     public List<LapCompleted> LapsCompleted { get; internal set; } = new List<LapCompleted>();
-    public LapCompleted? FastestLap { get; internal set; } = null;
 }
 
 public class CarTiming
@@ -51,8 +50,6 @@ public class CarTiming
     private void Apply(LapCompleted lapCompleted)
     {
         _currentState.LapsCompleted.Add(lapCompleted);
-        if (_currentState.FastestLap is null || lapCompleted.Time < _currentState.FastestLap.Time)
-            _currentState.FastestLap = lapCompleted;
     }
 
     private void Apply(LapDeleted lapDeleted)
