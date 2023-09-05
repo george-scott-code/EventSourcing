@@ -1,8 +1,10 @@
+using System.Security.Cryptography.X509Certificates;
+
 namespace EventSourcing;
 
 public class CurrentState
 {
-    public int LapsCompleted { get; internal set; }
+    public List<LapCompleted> LapsCompleted { get; internal set; } = new List<LapCompleted>();
     public LapCompleted? FastestLap { get; internal set; } = null;
 }
 
@@ -49,20 +51,15 @@ public class CarTiming
 
     private void Apply(LapCompleted lapCompleted)
     {
-        _currentState.LapsCompleted += 1;
+        // _currentState.LapsCompleted += 1;
+        _currentState.LapsCompleted.Add(lapCompleted);
         if (_currentState.FastestLap is null || lapCompleted.Time < _currentState.FastestLap.Time)
             _currentState.FastestLap = lapCompleted;
     }
 
     private void Apply(LapDeleted lapDeleted)
     {
-        if (_currentState.FastestLap is not null && lapDeleted.LapNumber == _currentState.FastestLap.LapNumber)
-            CalculateFastestLap();
-    }
-
-    private void CalculateFastestLap()
-    {
-        _currentState.FastestLap = _currentState.FastestLap;
+        
     }
 
     internal IList<IEvent> GetEvents()
@@ -70,7 +67,7 @@ public class CarTiming
         return _events;
     }
 
-    internal int GetLapsCompleted() => _currentState.LapsCompleted;
+    internal int GetLapsCompleted() => _currentState.LapsCompleted.Count;
 
-    internal TimeSpan? GetFastestLap() => _currentState.FastestLap?.Time;
+    internal TimeSpan? GetFastestLap() => _currentState.LapsCompleted?.Where(x => !x.IsDeleted).OrderBy(x => x.Time).FirstOrDefault()?.Time;
 }
