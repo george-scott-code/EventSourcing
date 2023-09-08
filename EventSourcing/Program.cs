@@ -148,6 +148,3 @@ internal class Program
     }
 
 }
-
-//consumer:
-// https://youtu.be/n_IQq3pze0s?t=687
