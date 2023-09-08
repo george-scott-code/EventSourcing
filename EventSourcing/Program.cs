@@ -9,8 +9,8 @@ internal partial class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, collection) =>
             {
-                collection.AddHostedService<KafkaConsumerHostedService>();
                 collection.AddHostedService<KafkaProducerHostedService>();
+                collection.AddHostedService<KafkaConsumerHostedService>();
             });
 
     static void Main(string[] args)

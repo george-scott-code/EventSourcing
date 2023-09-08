@@ -1,6 +1,4 @@
-using System.Text;
-using Kafka.Public;
-using Kafka.Public.Loggers;
+using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -11,37 +9,48 @@ internal partial class Program
     public class KafkaConsumerHostedService : IHostedService
     {
         private ILogger<KafkaConsumerHostedService> _logger;
-        private ClusterClient _cluster;
+        private ConsumerConfig _config;
+        private IConsumer<Null, string> _consumer;
+        private bool _cancelled;
 
         public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger)
         {
             _logger = logger;
 
-            // TODO: try using Kafka Package
-            _cluster = new ClusterClient(new Configuration
+            _config = new ConsumerConfig()
             {
-                Seeds = "localhost:9092"
-            }, new ConsoleLogger());
+                BootstrapServers = "localhost:9092",
+                GroupId = "foo",
+                AutoOffsetReset = AutoOffsetReset.Earliest
+            };
+            _consumer = new ConsumerBuilder<Null, string>(_config).Build();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _cluster.ConsumeFromLatest("demo");
-            _cluster.MessageReceived += record => 
-            {
-                // TODO: serialisation
-                _logger.LogInformation($"Recieved: {Encoding.UTF8.GetString(record.Value as byte[])}");
-            };
+            // TODO: exit gracefully
+            // using (var consumer = new ConsumerBuilder<Ignore, string>(_config).Build())
+            // {
+                _consumer.Subscribe("demo");
+
+                while (!_cancelled)
+                {
+                    var consumeResult = _consumer.Consume(cancellationToken);
+                    _logger.LogInformation(consumeResult.Message.Value);
+                }
+
+                _consumer.Close();
+            // }
 
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _cluster?.Dispose();
+            _cancelled = true;
+            _consumer?.Close();
+            _consumer?.Dispose();
             return Task.CompletedTask;
         }
-
     }
-
 }
