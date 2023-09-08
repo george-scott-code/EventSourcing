@@ -119,6 +119,8 @@ internal class Program
         public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger)
         {
             _logger = logger;
+
+            // TODO: try using Kafka Package
             _cluster = new ClusterClient(new Configuration
             {
                 Seeds = "localhost:9092"
@@ -130,6 +132,7 @@ internal class Program
             _cluster.ConsumeFromLatest("demo");
             _cluster.MessageReceived += record => 
             {
+                // TODO: serialisation
                 _logger.LogInformation($"Recieved: {Encoding.UTF8.GetString(record.Value as byte[])}");
             };
 
