@@ -1,5 +1,8 @@
 using System.Globalization;
+using System.Text;
 using Confluent.Kafka;
+using Kafka.Public;
+using Kafka.Public.Loggers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,6 +15,7 @@ internal class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, collection) =>
             {
+                collection.AddHostedService<KafkaConsumerHostedService>();
                 collection.AddHostedService<KafkaProducerHostedService>();
             });
 
@@ -89,7 +93,7 @@ internal class Program
         {
             for(var i = 0; i < 10; ++i)
             {
-                var value = "Hello World";
+                var value = $"Hello World {i}";
                 _logger.LogInformation(value);
                 await _producer.ProduceAsync("demo", new Message<Null, string>()
                 {
@@ -107,4 +111,40 @@ internal class Program
         }
     }
 
+    public class KafkaConsumerHostedService : IHostedService
+    {
+        private ILogger<KafkaConsumerHostedService> _logger;
+        private ClusterClient _cluster;
+
+        public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger)
+        {
+            _logger = logger;
+            _cluster = new ClusterClient(new Configuration
+            {
+                Seeds = "localhost:9092"
+            }, new ConsoleLogger());
+        }
+
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            _cluster.ConsumeFromLatest("demo");
+            _cluster.MessageReceived += record => 
+            {
+                _logger.LogInformation($"Recieved: {Encoding.UTF8.GetString(record.Value as byte[])}");
+            };
+
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _cluster?.Dispose();
+            return Task.CompletedTask;
+        }
+
+    }
+
 }
+
+//consumer:
+// https://youtu.be/n_IQq3pze0s?t=687
