@@ -27,7 +27,7 @@ internal partial class Program
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
             _consumer = new ConsumerBuilder<Null, LapCompleted?>(_config)
-                .SetValueDeserializer(new LapCompleted())
+                .SetValueDeserializer(new LapCompletedSerializer())
                 .Build();
         }
 
