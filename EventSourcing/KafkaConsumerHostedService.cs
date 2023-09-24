@@ -33,16 +33,14 @@ internal partial class Program
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // TODO: exit gracefully
-                _consumer.Subscribe("demo");
-
-                while (!_cancelled)
-                {
-                    var consumeResult = _consumer.Consume(cancellationToken);
-                    LapCompleted? raceEvent = consumeResult.Message.Value;
-                    ProcessRaceEvent(raceEvent);
-                }
-
-                _consumer.Close();
+            _consumer.Subscribe("demo");
+            while (!_cancelled)
+            {
+                var consumeResult = _consumer.Consume(cancellationToken);
+                LapCompleted? raceEvent = consumeResult.Message.Value;
+                ProcessRaceEvent(raceEvent);
+            }
+            _consumer.Close();
 
             return Task.CompletedTask;
         }
