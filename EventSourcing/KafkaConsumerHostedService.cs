@@ -8,6 +8,7 @@ internal partial class Program
 {
     public class KafkaConsumerHostedService : IHostedService
     {
+        private TimingRepository _timingRepository;
         private ILogger<KafkaConsumerHostedService> _logger;
         private ConsumerConfig _config;
         private IConsumer<Null, LapCompleted?> _consumer;
@@ -15,6 +16,7 @@ internal partial class Program
 
         public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger)
         {
+            _timingRepository = new TimingRepository();
             _logger = logger;
 
             _config = new ConsumerConfig()
@@ -31,8 +33,6 @@ internal partial class Program
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // TODO: exit gracefully
-            // using (var consumer = new ConsumerBuilder<Ignore, string>(_config).Build())
-            // {
                 _consumer.Subscribe("demo");
 
                 while (!_cancelled)
@@ -43,7 +43,6 @@ internal partial class Program
                 }
 
                 _consumer.Close();
-            // }
 
             return Task.CompletedTask;
         }
@@ -55,6 +54,9 @@ internal partial class Program
                 case LapCompleted lapCompleted:
                 {
                     _logger.LogInformation($"{lapCompleted.CarNumber} - {lapCompleted.LapTime}");
+                    var car = _timingRepository.Get(lapCompleted.CarNumber);
+                    car.LapCompleted(lapCompleted.LapNumber, "-", lapCompleted.LapTime);
+                    _timingRepository.Save(car);
                     return;
                 }
                 default:

@@ -36,6 +36,7 @@ internal partial class Program
             {
                 Value = new LapCompleted()
                 {
+                    LapNumber = 1,
                     CarNumber = 44,
                     // TODO: simplify inititialization
                     LapTime = TimeSpan.ParseExact("01:44.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None)
@@ -51,16 +52,17 @@ internal partial class Program
             return Task.CompletedTask;
         }
     }
-
+    
     public class RaceEvent
     {
         public Guid Id = Guid.NewGuid();
-        public int  CarNumber { get; set; }
+        public int  CarNumber { get; init; }
     }
 
     public class LapCompleted : RaceEvent, ISerializer<LapCompleted>, IDeserializer<LapCompleted?>
     {
-        public TimeSpan LapTime { get; set; }
+        public TimeSpan LapTime { get; init; }
+        public int LapNumber { get; init; }
 
         public byte[] Serialize(LapCompleted data, SerializationContext context)
         {

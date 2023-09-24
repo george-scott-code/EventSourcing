@@ -17,7 +17,6 @@ internal partial class Program
     {
         Console.WriteLine("Hello, World!");
         CreateHostBuilder(args).Build().Run();
-        // var timingRepository = new TimingRepository();
         // // TODO: Load Data from file
         // // TODO: Persistent Storage
         // // TODO: Data from events, try apache kafka?
@@ -46,8 +45,6 @@ internal partial class Program
         // //  6       10.386  1:46.377
         // //  24      10.529  1:46.520
 
-        // var car = timingRepository.Get(44);
-
         // // TODO: interactive input / run lap by lap
         // // TODO: tests
         // car.LapCompleted(1, "8.797", TimeSpan.ParseExact("01:44.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
@@ -55,9 +52,6 @@ internal partial class Program
         // car.LapCompleted(3, "8.797", TimeSpan.ParseExact("01:43.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
         // car.DeleteLapTime(3);
         
-        // // persist changes
-        // timingRepository.Save(car);
-
         // // TODO: should be loading projection data when available for efficiency
         // var timings = timingRepository.Get();
 
