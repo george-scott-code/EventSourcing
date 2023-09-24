@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using EventSourcing.Messages;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 

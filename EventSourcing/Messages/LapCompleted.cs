@@ -1,10 +1,8 @@
 using System.Text.Json;
 using Confluent.Kafka;
 
-namespace EventSourcing;
+namespace EventSourcing.Messages;
 
-internal partial class Program
-{
     public class LapCompleted : RaceEvent, ISerializer<LapCompleted>, IDeserializer<LapCompleted?>
     {
         public TimeSpan LapTime { get; init; }
@@ -31,4 +29,3 @@ internal partial class Program
         }
     }
 
-}

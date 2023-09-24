@@ -1,4 +1,6 @@
 
+using EventSourcing.Events;
+
 namespace EventSourcing;
 
 // demo storage, to be implemented in lib / db of choice

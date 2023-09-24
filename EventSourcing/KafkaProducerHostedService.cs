@@ -2,6 +2,7 @@ using System.Globalization;
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using EventSourcing.Messages;
 
 namespace EventSourcing;
 

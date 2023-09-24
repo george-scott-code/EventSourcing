@@ -1,4 +1,5 @@
 
+using EventSourcing.Events;
 namespace EventSourcing;
 
 public class CurrentState
@@ -23,22 +24,22 @@ public class CarTiming
     public void LapCompleted(int lapNumber, string gap, TimeSpan time)
     {
         // domain rules / validation
-        AddEvent(new LapCompleted(lapNumber, this.CarNumber, gap, time));
+        AddEvent(new LapCompletedEvent(lapNumber, this.CarNumber, gap, time));
     }
 
     public void DeleteLapTime(int lapNumber)
     {
-        AddEvent(new LapDeleted(lapNumber));
+        AddEvent(new LapDeletedEvent(lapNumber));
     }
 
     internal void AddEvent(IEvent evnt)
     {
         switch (evnt)
         {
-            case LapCompleted lapCompleted:
+            case LapCompletedEvent lapCompleted:
                 Apply(lapCompleted);
                 break;
-            case LapDeleted lapDeleted:
+            case LapDeletedEvent lapDeleted:
                 Apply(lapDeleted);
                 break;
             default: throw new NotSupportedException($"Unsupported Event: {nameof(evnt.GetType)}");
@@ -47,12 +48,12 @@ public class CarTiming
         _events.Add(evnt);
     }
 
-    private void Apply(LapCompleted lapCompleted)
+    private void Apply(LapCompletedEvent lapCompleted)
     {
         _currentState.LapsCompleted.Add(lapCompleted.LapNumber, new LapTiming(lapCompleted.Time));
     }
 
-    private void Apply(LapDeleted lapDeleted)
+    private void Apply(LapDeletedEvent lapDeleted)
     {
         _currentState.LapsCompleted[lapDeleted.LapNumber].IsDeleted = true;
     }
