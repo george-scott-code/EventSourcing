@@ -10,7 +10,7 @@ internal partial class Program
     {
         private ILogger<KafkaConsumerHostedService> _logger;
         private ConsumerConfig _config;
-        private IConsumer<Null, string> _consumer;
+        private IConsumer<Null, LapCompleted?> _consumer;
         private bool _cancelled;
 
         public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger)
@@ -23,7 +23,9 @@ internal partial class Program
                 GroupId = "foo",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
-            _consumer = new ConsumerBuilder<Null, string>(_config).Build();
+            _consumer = new ConsumerBuilder<Null, LapCompleted?>(_config)
+                .SetValueDeserializer(new LapCompleted())
+                .Build();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -36,13 +38,31 @@ internal partial class Program
                 while (!_cancelled)
                 {
                     var consumeResult = _consumer.Consume(cancellationToken);
-                    _logger.LogInformation(consumeResult.Message.Value);
+                    LapCompleted? raceEvent = consumeResult.Message.Value;
+                    ProcessRaceEvent(raceEvent);
                 }
 
                 _consumer.Close();
             // }
 
             return Task.CompletedTask;
+        }
+
+        private void ProcessRaceEvent(LapCompleted? raceEvent)
+        {
+            switch (raceEvent)
+            {
+                case LapCompleted lapCompleted:
+                {
+                    _logger.LogInformation($"{lapCompleted.CarNumber} - {lapCompleted.LapTime}");
+                    return;
+                }
+                default:
+                {
+                    _logger.LogInformation("could not parse event");
+                    return;
+                }
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
