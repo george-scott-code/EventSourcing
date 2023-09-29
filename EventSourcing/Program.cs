@@ -17,14 +17,28 @@ internal partial class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        CreateHostBuilder(args).Build().RunAsync();
+        var host = CreateHostBuilder(args).Build();
+        host.RunAsync();
+        using var scope = host.Services.CreateScope();
+        var services = scope.ServiceProvider;
+
+        var timingRepository = services.GetRequiredService<ITimingRepository>();
 
         var input = string.Empty;
 
         while(input != "q")
         {
             System.Console.WriteLine("Press 'q' to quit");
+            System.Console.WriteLine("Press 'f' to get fastest laps");
+
             input = Console.ReadLine();
+
+            switch(input)
+            {
+                case "f":
+                    PrintFastestLapTimes(timingRepository);
+                    return;
+            }
         }
 
         // // TODO: Load Data from file
@@ -62,14 +76,18 @@ internal partial class Program
         // car.LapCompleted(3, "8.797", TimeSpan.ParseExact("01:43.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
         // car.DeleteLapTime(3);
         
-        // // TODO: should be loading projection data when available for efficiency
-        // var timings = timingRepository.Get();
 
-        // foreach (var timing in timings)
-        // {
-        //     Console.WriteLine($"Car {timing.CarNumber} has completed {timing.GetLapsCompleted()} laps");
-        //     Console.WriteLine($"PB: {timing.GetFastestLap()}");
-        // }
     }
 
+    private static void PrintFastestLapTimes(ITimingRepository timingRepository)
+    {
+        //TODO: should be loading projection data when available for efficiency
+        var timings = timingRepository.Get();
+
+        foreach (var timing in timings)
+        {
+            Console.WriteLine($"Car {timing.CarNumber} has completed {timing.GetLapsCompleted()} laps");
+            Console.WriteLine($"PB: {timing.GetFastestLap()}");
+        }
+    }
 }
