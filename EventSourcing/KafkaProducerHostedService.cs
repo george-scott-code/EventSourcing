@@ -23,7 +23,7 @@ internal partial class Program
             // TODO: support generic race events
             _producer = new ProducerBuilder<Null, LapCompleted>(config)
                 .SetValueSerializer(new LapCompletedSerializer())
-                .SetErrorHandler((_, error) => Console.Error.WriteLine(error))
+                .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
                 .Build();
         }
 

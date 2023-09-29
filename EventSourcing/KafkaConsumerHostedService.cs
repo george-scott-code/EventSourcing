@@ -28,7 +28,7 @@ internal partial class Program
             };
             _consumer = new ConsumerBuilder<Null, LapCompleted?>(_config)
                 .SetValueDeserializer(new LapCompletedSerializer())
-                .SetErrorHandler((_, error) => Console.Error.WriteLine(error))
+                .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
                 .Build();
         }
 
