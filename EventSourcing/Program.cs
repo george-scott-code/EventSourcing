@@ -11,6 +11,7 @@ internal partial class Program
             {
                 collection.AddHostedService<KafkaProducerHostedService>();
                 collection.AddHostedService<KafkaConsumerHostedService>();
+                collection.AddSingleton<ITimingRepository, TimingRepository>();
             });
 
     static void Main(string[] args)

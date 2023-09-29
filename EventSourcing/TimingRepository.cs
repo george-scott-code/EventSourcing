@@ -4,11 +4,19 @@ using EventSourcing.Events;
 namespace EventSourcing;
 
 // demo storage, to be implemented in lib / db of choice
-public class TimingRepository
+
+public interface ITimingRepository
+{
+    public IList<CarTiming> Get();
+    public CarTiming Get(int carNumber);
+    public void Save(CarTiming carTiming);
+}
+
+public class TimingRepository : ITimingRepository
 {
     private readonly Dictionary<int, IList<IEvent>> _inMemoryStreams = new();
 
-    internal IList<CarTiming> Get()
+    public IList<CarTiming> Get()
     {
         var timings = new List<CarTiming>();
 

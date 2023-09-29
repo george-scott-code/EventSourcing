@@ -9,15 +9,15 @@ internal partial class Program
 {
     public class KafkaConsumerHostedService : IHostedService, IDisposable
     {
-        private TimingRepository _timingRepository;
+        private ITimingRepository _timingRepository;
         private ILogger<KafkaConsumerHostedService> _logger;
         private ConsumerConfig _config;
         private IConsumer<Null, LapCompleted?> _consumer;
         private bool _cancelled;
 
-        public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger)
+        public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger, ITimingRepository timingRepository)
         {
-            _timingRepository = new TimingRepository();
+            _timingRepository = timingRepository;
             _logger = logger;
 
             _config = new ConsumerConfig()
