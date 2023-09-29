@@ -24,20 +24,20 @@ internal partial class Program
 
         var timingRepository = services.GetRequiredService<ITimingRepository>();
 
-        var input = string.Empty;
+        char input = 'x';
 
-        while(input != "q")
+        System.Console.WriteLine("Press 'q' to quit");
+        System.Console.WriteLine("Press 'f' to get fastest laps");
+
+        while(input != 'q')
         {
-            System.Console.WriteLine("Press 'q' to quit");
-            System.Console.WriteLine("Press 'f' to get fastest laps");
-
-            input = Console.ReadLine();
+            input = Console.ReadKey(true).KeyChar;
 
             switch(input)
             {
-                case "f":
+                case 'f':
                     PrintFastestLapTimes(timingRepository);
-                    return;
+                    break;
             }
         }
 
