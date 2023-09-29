@@ -16,7 +16,16 @@ internal partial class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        CreateHostBuilder(args).Build().Run();
+        CreateHostBuilder(args).Build().RunAsync();
+
+        var input = string.Empty;
+
+        while(input != "q")
+        {
+            System.Console.WriteLine("Press 'q' to quit");
+            input = Console.ReadLine();
+        }
+
         // // TODO: Load Data from file
         // // TODO: Persistent Storage
         // // TODO: Data from events, try apache kafka?
