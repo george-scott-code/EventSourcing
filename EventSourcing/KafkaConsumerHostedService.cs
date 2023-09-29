@@ -7,7 +7,7 @@ namespace EventSourcing;
 
 internal partial class Program
 {
-    public class KafkaConsumerHostedService : IHostedService
+    public class KafkaConsumerHostedService : IHostedService, IDisposable
     {
         private TimingRepository _timingRepository;
         private ILogger<KafkaConsumerHostedService> _logger;
@@ -28,6 +28,7 @@ internal partial class Program
             };
             _consumer = new ConsumerBuilder<Null, LapCompleted?>(_config)
                 .SetValueDeserializer(new LapCompletedSerializer())
+                .SetErrorHandler((_, error) => Console.Error.WriteLine(error))
                 .Build();
         }
 
@@ -35,14 +36,14 @@ internal partial class Program
         {
             // TODO: exit gracefully
             _consumer.Subscribe("demo");
-            while (!_cancelled)
+            while (!cancellationToken.IsCancellationRequested && !_cancelled)
             {
                 var consumeResult = _consumer.Consume(cancellationToken);
                 LapCompleted? raceEvent = consumeResult.Message.Value;
                 ProcessRaceEvent(raceEvent);
             }
             _consumer.Close();
-
+            
             return Task.CompletedTask;
         }
 
@@ -72,6 +73,14 @@ internal partial class Program
             _consumer?.Close();
             _consumer?.Dispose();
             return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            StopAsync(new System.Threading.CancellationToken());
+            _cancelled = true;
+            _consumer?.Close();
+            _consumer?.Dispose();
         }
     }
 }
