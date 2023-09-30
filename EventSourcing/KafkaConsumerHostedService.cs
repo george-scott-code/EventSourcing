@@ -7,6 +7,7 @@ namespace EventSourcing;
 
 internal partial class Program
 {
+    // TODO: decouple service
     public class KafkaConsumerHostedService : IHostedService, IDisposable
     {
         private ITimingRepository _timingRepository;

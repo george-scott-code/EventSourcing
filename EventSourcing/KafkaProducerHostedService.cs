@@ -8,6 +8,7 @@ namespace EventSourcing;
 
 internal partial class Program
 {
+    // TODO: decouple service
     public class KafkaProducerHostedService : IHostedService
     {
         private readonly ILogger<KafkaProducerHostedService> _logger;
