@@ -16,7 +16,6 @@ internal partial class Program
 
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
         var host = CreateHostBuilder(args).Build();
         host.RunAsync();
         using var scope = host.Services.CreateScope();
