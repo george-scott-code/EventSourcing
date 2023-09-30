@@ -31,11 +31,11 @@ internal partial class Program
                 .SetValueDeserializer(new LapCompletedSerializer())
                 .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
                 .Build();
+
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            // TODO: exit gracefully
             _consumer.Subscribe("demo");
             while (!cancellationToken.IsCancellationRequested && !_cancelled)
             {
