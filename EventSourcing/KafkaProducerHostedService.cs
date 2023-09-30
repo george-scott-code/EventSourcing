@@ -26,25 +26,38 @@ internal partial class Program
                 .SetValueSerializer(new LapCompletedSerializer())
                 .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
                 .Build();
+
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            // car.LapCompleted(1, "8.797", TimeSpan.ParseExact("01:44.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
-            // car.LapCompleted(2, "8.797", TimeSpan.ParseExact("01:45.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
-            // car.LapCompleted(3, "8.797", TimeSpan.ParseExact("01:43.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None));
-            // TODO: extract and pass from collection / parse
-            await _producer.ProduceAsync("demo", new Message<Null, LapCompleted>()
+            try
             {
-                Value = new LapCompleted()
-                {
-                    LapNumber = 1,
-                    CarNumber = 44,
-                    // TODO: simplify inititialization
-                    LapTime = TimeSpan.ParseExact("01:44.788", @"mm\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None)
-                }
-            }, cancellationToken);
+                string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"Data\Lap1.txt");
+                string[] lines = File.ReadAllLines(path);
 
+                foreach(var line in lines.Skip(1))
+                {
+                    string[] data = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    var lap = new LapCompleted()
+                    {
+                        LapNumber = 1,
+                        CarNumber = int.Parse(data[0]),
+                        // TODO: gap
+                        // TODO: simplify inititialization
+                        LapTime = TimeSpan.ParseExact(data[2], @"m\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None)
+                    };
+
+                    await _producer.ProduceAsync("demo", new Message<Null, LapCompleted>()
+                    {
+                        Value = lap
+                    }, cancellationToken);
+                }
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
             _producer.Flush(TimeSpan.FromSeconds(10));
         }
 
