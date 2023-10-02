@@ -11,7 +11,7 @@ public class CarTiming
 {
     public int CarNumber { get; }
     // can this be abstracted?
-    public readonly IList<IEvent> _events = new List<IEvent>();
+    public readonly IList<RaceEvent> _events = new List<RaceEvent>();
 
     // Projection (Current State)
     private readonly CurrentState _currentState = new();
@@ -29,10 +29,10 @@ public class CarTiming
 
     public void DeleteLapTime(int lapNumber)
     {
-        AddEvent(new LapDeletedEvent(lapNumber));
+        AddEvent(new LapDeletedEvent(lapNumber, this.CarNumber));
     }
 
-    internal void AddEvent(IEvent evnt)
+    internal void AddEvent(RaceEvent evnt)
     {
         switch (evnt)
         {
@@ -58,7 +58,7 @@ public class CarTiming
         _currentState.LapsCompleted[lapDeleted.LapNumber].IsDeleted = true;
     }
 
-    internal IList<IEvent> GetEvents()
+    internal IList<RaceEvent> GetEvents()
     {
         return _events;
     }

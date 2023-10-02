@@ -30,6 +30,8 @@ internal partial class Program
 
         System.Console.WriteLine("Press 'q' to quit");
         System.Console.WriteLine("Press 'f' to get fastest laps");
+        System.Console.WriteLine("Press 'l' to get fastest laps to target lap");
+
 
         while(input != 'q')
         {
@@ -39,6 +41,12 @@ internal partial class Program
             {
                 case 'f':
                     PrintFastestLapTimes(timingRepository);
+                    break;
+                case 'l':
+                    System.Console.WriteLine("enter lap number");
+                    var lapInput = Console.ReadLine();
+                    int.TryParse(lapInput, out int lap);
+                    PrintFastestLapTimes(timingRepository, lap);
                     break;
             }
         }
@@ -50,16 +58,23 @@ internal partial class Program
         // // TODO: Tests when patterns established
         // // TODO: do we want to update per lap time or per lap? 
         // //       both "race" and drivers could subscribe to events
-
         // // TODO: interactive input / run lap by lap
         // // TODO: tests
     
     }
 
-    private static void PrintFastestLapTimes(ITimingRepository timingRepository)
+    private static void PrintFastestLapTimes(ITimingRepository timingRepository, int? lap = null)
     {
+        IList<CarTiming> timings;
         //TODO: should be loading projection data when available for efficiency
-        var timings = timingRepository.Get();
+        if (lap is null)
+        {
+            timings = timingRepository.Get();
+        }
+        else
+        {
+            timings = timingRepository.GetToLap(lap.Value);
+        }
 
         foreach (var timing in timings)
         {

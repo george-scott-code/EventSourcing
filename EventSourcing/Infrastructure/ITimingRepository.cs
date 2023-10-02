@@ -5,6 +5,7 @@ namespace EventSourcing.Infrastructure;
 public interface ITimingRepository
 {
     public IList<CarTiming> Get();
+    public IList<CarTiming> GetToLap(int lap);
     public CarTiming Get(int carNumber);
     public void Save(CarTiming carTiming);
 }

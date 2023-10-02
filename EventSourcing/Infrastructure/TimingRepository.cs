@@ -5,7 +5,7 @@ namespace EventSourcing.Infrastructure;
 
 public class TimingRepository : ITimingRepository
 {
-    private readonly Dictionary<int, IList<IEvent>> _inMemoryStreams = new();
+    private readonly Dictionary<int, IList<RaceEvent>> _inMemoryStreams = new();
 
     public IList<CarTiming> Get()
     {
@@ -38,6 +38,26 @@ public class TimingRepository : ITimingRepository
         }
         return carTiming;
     }
+
+    public IList<CarTiming> GetToLap(int lap)
+    {
+        var timings = new List<CarTiming>();
+
+        foreach(var timing in _inMemoryStreams)
+        {
+            var carTiming = new CarTiming(timing.Key);
+
+            foreach (var evnt in timing.Value.Where(x => x.LapNumber <= lap))
+            {
+                
+                carTiming.AddEvent(evnt);
+            }
+
+            timings.Add(carTiming);
+        }
+        return timings;
+    }
+
 
     public void Save(CarTiming carTiming)
     {

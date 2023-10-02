@@ -49,7 +49,7 @@ public class KafkaProducerHostedService : IHostedService
 
             string path2 = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
                                        @"Data\Lap2.txt");
-            string[] lines2 = File.ReadAllLines(path);
+            string[] lines2 = File.ReadAllLines(path2);
             ParseLapTime(2, lines2);
         }
         //TODO: handle file exception and parsing exceptions separately
