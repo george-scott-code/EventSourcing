@@ -10,6 +10,8 @@ public class KafkaProducerHostedService : IHostedService
 {
     private readonly ILogger<KafkaProducerHostedService> _logger;
     private IProducer<Null, LapCompleted> _producer;
+    ICollection<LapCompleted> laps = new List<LapCompleted>();
+
     public KafkaProducerHostedService(ILogger<KafkaProducerHostedService> logger)
     {
         _logger = logger;
@@ -23,7 +25,7 @@ public class KafkaProducerHostedService : IHostedService
             .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
             .Build();
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         foreach(var lap in ParseLapTimes())
@@ -38,24 +40,17 @@ public class KafkaProducerHostedService : IHostedService
 
     private IEnumerable<LapCompleted> ParseLapTimes()
     {
-        ICollection<LapCompleted> laps = new List<LapCompleted>();
         try
         {
             string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
                                        @"Data\Lap1.txt");
             string[] lines = File.ReadAllLines(path);
-            foreach(var line in lines.Skip(1))
-            {
-                string[] data = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                laps.Add( new LapCompleted()
-                {
-                    LapNumber = 1,
-                    CarNumber = int.Parse(data[0]),
-                    // TODO: gap
-                    // TODO: simplify inititialization
-                    LapTime = TimeSpan.ParseExact(data[2], @"m\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None)
-                });
-            }
+            ParseLapTime(1, lines);
+
+            string path2 = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                                       @"Data\Lap2.txt");
+            string[] lines2 = File.ReadAllLines(path);
+            ParseLapTime(2, lines2);
         }
         //TODO: handle file exception and parsing exceptions separately
         catch(Exception e)
@@ -63,6 +58,20 @@ public class KafkaProducerHostedService : IHostedService
             _logger.LogError(e.Message);
         }
         return laps;
+    }
+
+    private void ParseLapTime(int lapNumber, string[] lines)
+    {
+        foreach(var line in lines.Skip(1))
+        {
+            string[] data = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            laps.Add( new LapCompleted()
+            {
+                LapNumber = lapNumber,
+                CarNumber = int.Parse(data[0]),
+                LapTime = TimeSpan.ParseExact(data[2], @"m\:ss\.fff", CultureInfo.InvariantCulture, TimeSpanStyles.None)
+            });
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
