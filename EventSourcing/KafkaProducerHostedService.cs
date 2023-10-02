@@ -46,7 +46,8 @@ internal partial class Program
             ICollection<LapCompleted> laps = new List<LapCompleted>();
             try
             {
-                string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"Data\Lap1.txt");
+                string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                                           @"Data\Lap1.txt");
                 string[] lines = File.ReadAllLines(path);
 
                 foreach(var line in lines.Skip(1))

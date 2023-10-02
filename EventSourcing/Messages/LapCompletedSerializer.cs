@@ -3,7 +3,7 @@ using Confluent.Kafka;
 
 namespace EventSourcing.Messages;
 
-public class LapCompletedSerializer : ISerializer<LapCompleted>, IDeserializer<LapCompleted?>
+public class LapCompletedSerializer : ISerializer<LapCompleted>, IDeserializer<LapCompleted>
 {
     public byte[] Serialize(LapCompleted data, SerializationContext context)
     {
@@ -18,8 +18,8 @@ public class LapCompletedSerializer : ISerializer<LapCompleted>, IDeserializer<L
     }
     
     // TODO why no access modifier here?
-    LapCompleted? IDeserializer<LapCompleted?>.Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+    LapCompleted IDeserializer<LapCompleted>.Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
     {
-        return JsonSerializer.Deserialize<LapCompleted>(data.ToArray());
+        return JsonSerializer.Deserialize<LapCompleted>(data.ToArray()) ?? new LapCompleted();
     }
 }

@@ -13,7 +13,7 @@ internal partial class Program
         private ITimingRepository _timingRepository;
         private ILogger<KafkaConsumerHostedService> _logger;
         private ConsumerConfig _config;
-        private IConsumer<Null, LapCompleted?> _consumer;
+        private IConsumer<Null, LapCompleted> _consumer;
         private bool _cancelled;
 
         public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger, ITimingRepository timingRepository)
@@ -27,7 +27,7 @@ internal partial class Program
                 GroupId = "foo",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
-            _consumer = new ConsumerBuilder<Null, LapCompleted?>(_config)
+            _consumer = new ConsumerBuilder<Null, LapCompleted>(_config)
                 .SetValueDeserializer(new LapCompletedSerializer())
                 .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
                 .Build();
@@ -40,7 +40,7 @@ internal partial class Program
             while (!cancellationToken.IsCancellationRequested && !_cancelled)
             {
                 var consumeResult = _consumer.Consume(cancellationToken);
-                LapCompleted? raceEvent = consumeResult.Message.Value;
+                LapCompleted raceEvent = consumeResult.Message.Value;
                 ProcessRaceEvent(raceEvent);
             }
             _consumer.Close();
@@ -48,7 +48,7 @@ internal partial class Program
             return Task.CompletedTask;
         }
 
-        private void ProcessRaceEvent(LapCompleted? raceEvent)
+        private void ProcessRaceEvent(LapCompleted raceEvent)
         {
             switch (raceEvent)
             {
