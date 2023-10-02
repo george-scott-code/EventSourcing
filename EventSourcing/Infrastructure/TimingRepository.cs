@@ -1,16 +1,7 @@
 
 using EventSourcing.Events;
 
-namespace EventSourcing;
-
-// demo storage, to be implemented in lib / db of choice
-
-public interface ITimingRepository
-{
-    public IList<CarTiming> Get();
-    public CarTiming Get(int carNumber);
-    public void Save(CarTiming carTiming);
-}
+namespace EventSourcing.Infrastructure;
 
 public class TimingRepository : ITimingRepository
 {

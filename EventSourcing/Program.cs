@@ -1,5 +1,7 @@
+using EventSourcing.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using EventSourcing.Domain.Services;
 
 namespace EventSourcing;
 
