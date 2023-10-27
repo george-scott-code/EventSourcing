@@ -40,15 +40,14 @@ public class KafkaProducerHostedService : IHostedService
 
     private IEnumerable<LapCompleted> ParseLapTimes()
     {
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
         try
         {
-            string path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
-                                       @"Data\Lap1.txt");
+            string path = Path.Combine(directory, @"Data\Lap1.txt");
             string[] lines = File.ReadAllLines(path);
             ParseLapTime(1, lines);
 
-            string path2 = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
-                                       @"Data\Lap2.txt");
+            string path2 = Path.Combine(directory, @"Data\Lap2.txt");
             string[] lines2 = File.ReadAllLines(path2);
             ParseLapTime(2, lines2);
         }
@@ -56,6 +55,7 @@ public class KafkaProducerHostedService : IHostedService
         catch(Exception e)
         {
             _logger.LogError(e.Message);
+            throw;
         }
         return laps;
     }
