@@ -9,8 +9,8 @@ namespace EventSourcing.Domain.Services;
 public class KafkaProducerHostedService : IHostedService
 {
     private readonly ILogger<KafkaProducerHostedService> _logger;
-    private IProducer<Null, LapCompleted> _producer;
-    ICollection<LapCompleted> laps = new List<LapCompleted>();
+    private readonly IProducer<Null, LapCompleted> _producer;
+    private readonly ICollection<LapCompleted> laps = new List<LapCompleted>();
 
     public KafkaProducerHostedService(ILogger<KafkaProducerHostedService> logger)
     {
@@ -28,7 +28,7 @@ public class KafkaProducerHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        foreach(var lap in ParseLapTimes())
+        foreach(LapCompleted lap in ParseLapTimes())
         {
             await _producer.ProduceAsync("demo", new Message<Null, LapCompleted>()
             {
