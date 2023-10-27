@@ -8,15 +8,17 @@ namespace EventSourcing.Domain.Services;
 // TODO: decouple service
 public class KafkaConsumerHostedService : IHostedService, IDisposable
 {
-    private ITimingRepository _timingRepository;
-    private ILogger<KafkaConsumerHostedService> _logger;
-    private ConsumerConfig _config;
-    private IConsumer<Null, LapCompleted> _consumer;
+    private readonly ITimingRepository _timingRepository;
+    private readonly ILogger<KafkaConsumerHostedService> _logger;
+    private readonly ConsumerConfig _config;
+    private readonly IConsumer<Null, LapCompleted> _consumer;
     private bool _cancelled;
+
     public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger, ITimingRepository timingRepository)
     {
         _timingRepository = timingRepository;
         _logger = logger;
+        //TODO: extract / inject
         _config = new ConsumerConfig()
         {
             BootstrapServers = "localhost:9092",
@@ -28,6 +30,7 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
             .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))
             .Build();
     }
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _consumer.Subscribe("demo");
@@ -41,6 +44,7 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
         
         return Task.CompletedTask;
     }
+
     private void ProcessRaceEvent(LapCompleted raceEvent)
     {
         switch (raceEvent)
@@ -48,7 +52,7 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
             case LapCompleted lapCompleted:
             {
                 _logger.LogInformation($"{lapCompleted.CarNumber} - {lapCompleted.LapTime}");
-                var car = _timingRepository.Get(lapCompleted.CarNumber);
+                CarTiming car = _timingRepository.Get(lapCompleted.CarNumber);
                 car.LapCompleted(lapCompleted.LapNumber, "-", lapCompleted.LapTime);
                 _timingRepository.Save(car);
                 return;
@@ -60,6 +64,7 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
             }
         }
     }
+
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _cancelled = true;
@@ -67,9 +72,10 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
         _consumer?.Dispose();
         return Task.CompletedTask;
     }
+    
     public void Dispose()
     {
-        StopAsync(new System.Threading.CancellationToken());
+        _ = StopAsync(new CancellationToken());
         _cancelled = true;
         _consumer?.Close();
         _consumer?.Dispose();
