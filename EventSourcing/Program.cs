@@ -18,20 +18,19 @@ internal partial class Program
 
     static void Main(string[] args)
     {
-        var host = CreateHostBuilder(args).Build();
+        IHost host = CreateHostBuilder(args).Build();
         host.RunAsync();
 
-        using var scope = host.Services.CreateScope();
-        var services = scope.ServiceProvider;
+        using IServiceScope? scope = host.Services.CreateScope();
+        IServiceProvider services = scope.ServiceProvider;
 
         var timingRepository = services.GetRequiredService<ITimingRepository>();
 
-        char input = 'x';
+        char input = default;
 
-        System.Console.WriteLine("Press 'q' to quit");
-        System.Console.WriteLine("Press 'f' to get fastest laps");
-        System.Console.WriteLine("Press 'l' to get fastest laps to target lap");
-
+        Console.WriteLine("Press 'q' to quit");
+        Console.WriteLine("Press 'f' to get fastest laps");
+        Console.WriteLine("Press 'l' to get fastest laps to target lap");
 
         while(input != 'q')
         {
@@ -43,7 +42,7 @@ internal partial class Program
                     PrintFastestLapTimes(timingRepository);
                     break;
                 case 'l':
-                    System.Console.WriteLine("enter lap number");
+                    Console.WriteLine("enter lap number");
                     var lapInput = Console.ReadLine();
                     int.TryParse(lapInput, out int lap);
                     PrintFastestLapTimes(timingRepository, lap);
@@ -76,7 +75,7 @@ internal partial class Program
             timings = timingRepository.GetToLap(lap.Value);
         }
 
-        foreach (var timing in timings)
+        foreach (CarTiming timing in timings)
         {
             Console.WriteLine($"Car {timing.CarNumber} has completed {timing.GetLapsCompleted()} laps");
             Console.WriteLine($"PB: {timing.GetFastestLap()}");

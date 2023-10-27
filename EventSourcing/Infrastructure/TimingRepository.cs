@@ -48,8 +48,7 @@ public class TimingRepository : ITimingRepository
             var carTiming = new CarTiming(timing.Key);
 
             foreach (var evnt in timing.Value.Where(x => x.LapNumber <= lap))
-            {
-                
+            { 
                 carTiming.AddEvent(evnt);
             }
 
