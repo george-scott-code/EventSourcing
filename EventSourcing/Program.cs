@@ -59,6 +59,7 @@ internal partial class Program
         // //       both "race" and drivers could subscribe to events
         // // TODO: interactive input / run lap by lap
         // // TODO: tests
+        //TODO: retry / unique key
     
     }
 
