@@ -21,7 +21,7 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
         //TODO: extract / inject
         _config = new ConsumerConfig()
         {
-            BootstrapServers = "localhost:9092",
+            BootstrapServers = "localhost:29092",
             GroupId = "foo",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };

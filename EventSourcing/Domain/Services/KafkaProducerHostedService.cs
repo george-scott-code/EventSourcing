@@ -17,7 +17,7 @@ public class KafkaProducerHostedService : IHostedService
         _logger = logger;
         var config = new ProducerConfig()
         {
-            BootstrapServers = "localhost:9092"
+            BootstrapServers = "localhost:29092"
         };
         // TODO: support generic race events
         _producer = new ProducerBuilder<Null, LapCompleted>(config)
