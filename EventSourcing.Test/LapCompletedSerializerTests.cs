@@ -17,11 +17,7 @@ public class LapCompletedSerializerTests
 
         var serialized = target.Serialize(lap, new Confluent.Kafka.SerializationContext());
         var result = target.Deserialize(serialized, false, new Confluent.Kafka.SerializationContext());
-
-        // TODO: serialize / deserialize with ID
-        // Assert.Equal(lap, result);
-        Assert.Equal(lap.CarNumber, result.CarNumber);
-        Assert.Equal(lap.LapNumber, result.LapNumber);
-        Assert.Equal(lap.LapTime, result.LapTime);
+   
+        Assert.Equivalent(lap, result);
     }
 }
