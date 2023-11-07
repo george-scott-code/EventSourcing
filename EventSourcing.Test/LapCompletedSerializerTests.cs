@@ -6,7 +6,7 @@ public class LapCompletedSerializerTests
     [Fact]
     public void LapCompletedSerializer_ShouldSerailize()
     {
-        var target = new LapCompletedSerializer();
+        LapCompletedSerializer serializer = new();
 
         LapCompleted lap = new()
         {   
@@ -15,8 +15,8 @@ public class LapCompletedSerializerTests
             LapTime = TimeSpan.FromSeconds(240)
         };
 
-        var serialized = target.Serialize(lap, new Confluent.Kafka.SerializationContext());
-        var result = target.Deserialize(serialized, false, new Confluent.Kafka.SerializationContext());
+        byte[] serialized = serializer.Serialize(lap, new Confluent.Kafka.SerializationContext());
+        LapCompleted result = serializer.Deserialize(serialized, false, new Confluent.Kafka.SerializationContext());
    
         Assert.Equivalent(lap, result);
     }
