@@ -17,8 +17,7 @@ public class LapCompletedSerializer : ISerializer<LapCompleted>, IDeserializer<L
         return ms.ToArray();
     }
     
-    // TODO why no access modifier here?
-    LapCompleted IDeserializer<LapCompleted>.Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+    public LapCompleted Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
     {
         return JsonSerializer.Deserialize<LapCompleted>(data.ToArray()) ?? new LapCompleted();
     }
