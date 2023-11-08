@@ -28,15 +28,13 @@ internal partial class Program
 
         char input = default;
 
-        Console.WriteLine("Press 'q' to quit");
-        Console.WriteLine("Press 'f' to get fastest laps");
-        Console.WriteLine("Press 'l' to get fastest laps to target lap");
+        PrintOptions();
 
         while(input != 'q')
         {
             input = Console.ReadKey(true).KeyChar;
 
-            switch(input)
+            switch (input)
             {
                 case 'f':
                     PrintFastestLapTimes(timingRepository);
@@ -44,8 +42,11 @@ internal partial class Program
                 case 'l':
                     Console.WriteLine("enter lap number");
                     var lapInput = Console.ReadLine();
-                    int.TryParse(lapInput, out int lap);
+                    _ = int.TryParse(lapInput, out int lap);
                     PrintFastestLapTimes(timingRepository, lap);
+                    break;
+                default:
+                    PrintOptions();
                     break;
             }
         }
@@ -60,8 +61,17 @@ internal partial class Program
         // // TODO: interactive input / run lap by lap
         // // TODO: tests
         //TODO: retry / unique key
-    
+
+
     }
+
+    private static void PrintOptions()
+    {  
+        Console.WriteLine("Press 'q' to quit");
+        Console.WriteLine("Press 'f' to get fastest laps");
+        Console.WriteLine("Press 'l' to get fastest laps to target lap");
+    }
+
 
     private static void PrintFastestLapTimes(ITimingRepository timingRepository, int? lap = null)
     {
