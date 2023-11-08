@@ -9,9 +9,9 @@ public class TimingRepository : ITimingRepository
 
     public IList<CarTiming> Get()
     {
-        var timings = new List<CarTiming>();
+        List<CarTiming> timings = new();
 
-        foreach(var timing in _inMemoryStreams)
+        foreach(KeyValuePair<int, IList<RaceEvent>> timing in _inMemoryStreams)
         {
             var carTiming = new CarTiming(timing.Key);
 
