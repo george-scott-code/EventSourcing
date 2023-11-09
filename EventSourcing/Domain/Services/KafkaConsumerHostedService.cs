@@ -14,17 +14,12 @@ public class KafkaConsumerHostedService : IHostedService, IDisposable
     private readonly IConsumer<Null, LapCompleted> _consumer;
     private bool _cancelled;
 
-    public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger, ITimingRepository timingRepository)
+    public KafkaConsumerHostedService(ILogger<KafkaConsumerHostedService> logger, ITimingRepository timingRepository, ConsumerConfig config)
     {
         _timingRepository = timingRepository;
         _logger = logger;
         //TODO: extract / inject
-        _config = new ConsumerConfig()
-        {
-            BootstrapServers = "localhost:29092",
-            GroupId = "foo",
-            AutoOffsetReset = AutoOffsetReset.Earliest
-        };
+        _config = config;
         _consumer = new ConsumerBuilder<Null, LapCompleted>(_config)
             .SetValueDeserializer(new LapCompletedSerializer())
             .SetErrorHandler((_, error) => _logger.LogError(error.ToString()))

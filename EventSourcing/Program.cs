@@ -2,6 +2,7 @@ using EventSourcing.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using EventSourcing.Domain.Services;
+using Confluent.Kafka;
 
 namespace EventSourcing;
 
@@ -14,6 +15,12 @@ internal partial class Program
                 collection.AddHostedService<KafkaProducerHostedService>();
                 collection.AddHostedService<KafkaConsumerHostedService>();
                 collection.AddSingleton<ITimingRepository, TimingRepository>();
+                collection.AddSingleton<ConsumerConfig>(new ConsumerConfig() 
+                {
+                    BootstrapServers = "localhost:29092",
+                    GroupId = "foo",
+                    AutoOffsetReset = AutoOffsetReset.Earliest
+                });
             });
 
     static void Main(string[] args)
