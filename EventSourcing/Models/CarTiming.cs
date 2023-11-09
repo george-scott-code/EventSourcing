@@ -21,15 +21,15 @@ public class CarTiming
         CarNumber = carNumber;
     }
 
-    public void LapCompleted(int lapNumber, string gap, TimeSpan time)
+    public void LapCompleted(int lapNumber, string gap, TimeSpan lapTime)
     {
         // domain rules / validation
-        AddEvent(new LapCompletedEvent(lapNumber, this.CarNumber, gap, time));
+        AddEvent(new LapCompletedEvent(lapNumber, CarNumber, gap, lapTime));
     }
 
     public void DeleteLapTime(int lapNumber)
     {
-        AddEvent(new LapDeletedEvent(lapNumber, this.CarNumber));
+        AddEvent(new LapDeletedEvent(lapNumber, CarNumber));
     }
 
     internal void AddEvent(RaceEvent evnt)

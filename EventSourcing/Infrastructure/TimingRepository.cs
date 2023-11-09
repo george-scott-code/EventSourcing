@@ -15,7 +15,7 @@ public class TimingRepository : ITimingRepository
         {
             var carTiming = new CarTiming(timing.Key);
 
-            foreach (var evnt in timing.Value)
+            foreach (RaceEvent evnt in timing.Value)
             {
                 carTiming.AddEvent(evnt);
             }
@@ -31,7 +31,7 @@ public class TimingRepository : ITimingRepository
 
         if (_inMemoryStreams.ContainsKey(carNumber))
         {
-            foreach (var evnt in _inMemoryStreams[carNumber])
+            foreach (RaceEvent evnt in _inMemoryStreams[carNumber])
             {
                 carTiming.AddEvent(evnt);
             }
@@ -43,7 +43,7 @@ public class TimingRepository : ITimingRepository
     {
         var timings = new List<CarTiming>();
 
-        foreach(var timing in _inMemoryStreams)
+        foreach(KeyValuePair<int, IList<RaceEvent>> timing in _inMemoryStreams)
         {
             var carTiming = new CarTiming(timing.Key);
 
@@ -56,7 +56,6 @@ public class TimingRepository : ITimingRepository
         }
         return timings;
     }
-
 
     public void Save(CarTiming carTiming)
     {
