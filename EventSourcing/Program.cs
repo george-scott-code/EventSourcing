@@ -51,18 +51,15 @@ internal partial class Program
             }
         }
 
-        // // TODO: Load Data from file
-        // // TODO: Persistent Storage
-        // // TODO: Data from events, try apache kafka?
-        // // TODO: Projections
-        // // TODO: Tests when patterns established
-        // // TODO: do we want to update per lap time or per lap? 
-        // //       both "race" and drivers could subscribe to events
-        // // TODO: interactive input / run lap by lap
-        // // TODO: tests
-        //TODO: retry / unique key
-
-
+        // TODO: Load Data from file
+        // TODO: Persistent Storage
+        // TODO: Data from events, try apache kafka?
+        // TODO: Projections
+        // TODO: Tests when patterns established
+        // TODO: do we want to update per lap time or per lap? 
+        //       both "race" and drivers could subscribe to events
+        // TODO: interactive input / run lap by lap
+        // TODO: retry / unique key
     }
 
     private static void PrintOptions()
